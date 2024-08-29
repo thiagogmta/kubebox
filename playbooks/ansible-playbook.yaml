@@ -4,7 +4,6 @@
   become_method: sudo
   gather_facts: yes
   tasks:
-
     - name: Remove generated ubuntu hosts
       lineinfile:
         path: /etc/hosts
@@ -41,6 +40,21 @@
           - net-tools
         state: present
         update_cache: yes
+
+    - name: Download Helm installation script
+      get_url:
+        url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+        dest: /tmp/get-helm-3.sh
+        mode: '0755'
+
+    - name: Install Helm
+      shell: /tmp/get-helm-3.sh
+
+    - name: Verify Helm installation
+      command: helm version
+      register: helm_version
+      failed_when: "'Version' not in helm_version.stdout"
+      changed_when: False
 
     - name: Install containerd
       apt:

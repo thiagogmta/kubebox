@@ -40,7 +40,7 @@ As ferramentas a seguir devem estar instaladas no ambiente:
 - Kubeadm
 - Kubelet
 - Kubectl
-- Istio Service Mesh
+- Helm
 
 ## Criando o Ambiente
 
@@ -84,6 +84,68 @@ kubectl get nodes
 > Observação: Os nodes podem demorar alguns minutos para que seu status seja apresentado como "Ready".
 
 Enjoy! Seu cluster está pronto para receber aplicações de teste.
+
+## Instalação do Istio Service Mesh
+
+No Master Node iremos executar os comandos necessários:
+
+1. Download do binário de instalação
+
+```bash
+curl -L https://istio.io/downloadIstio | sh -
+cd istio*
+export PATH=$PWD/bin:$PATH
+```
+
+2. Instalação do istio
+
+```bash
+istioctl install --set profile=demo
+kubectl label namespace default istio-injection=enabled
+```
+
+![Instalação istio](/img/istio.png)
+
+3. Ativação da injeção automática do sidecar em todos os pods do namespace.
+
+```bash
+kubectl label namespace default istio-injection=enabled
+```
+
+4. Verificando a instalação do Istio
+
+    - Lista todos os serviços no  namespace: istio-system
+    - Lista todos os pods em execução no namespace: istio-system
+    - Exibe todos os recursos (pods, serviços, deployments, etc)
+
+```bash
+kubectl get svc -n istio-system
+kubectl get pods -n istio-system
+kubectl get all
+```
+
+## Pacote de Serviços Complementares
+
+Nesta sessão é apresentado a instalação e configuração de ferramentas complementares ao cluster:
+
+- Kugernetes Dashboard
+- Prometheus
+- Jaeger
+- Grafana
+- Kiali
+
+### Kubernetes Dashboard
+
+É uma interface web de usuário que permite a visualização e o gerenciamento do cluster.
+
+Instalação:
+
+```bash
+# Adicionando o repositório do kubernetes-dashboard
+helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
+# Deploy do dashboard usando Helm
+helm upgrade --install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard --create-namespace --namespace kubernetes-dashboard
+```
 
 ## Alterando a quantidade de Nós ou Recursos exigidos
 
