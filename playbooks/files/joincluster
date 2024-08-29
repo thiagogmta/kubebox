@@ -1,3 +1,3 @@
 #!/bin/bash
 
-kubeadm join 192.168.50.10:6443 --token u52sbm.1vu218gr5rpt8tot --discovery-token-ca-cert-hash sha256:778e715d0fde59357e6f6c4d4f76394cc8ff26194383965f188607086a92f71e 
+kubeadm join 192.168.50.10:6443 --token q1fe42.yn3iv2bn9cnlpnb1 --discovery-token-ca-cert-hash sha256:32230ac12fd11efbc745ed8fd745932ebf7c293dab7552f8d124752d111db2c0 
