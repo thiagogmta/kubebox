@@ -5,13 +5,17 @@ Esse repositório apresenta o Kubebox uma automação de ambiente de cluster Kub
 Thiago Guimarães Tavares   
 thiagogmta@ifto.edu.br
 
-## Requisitos
+## Ambiente e Requisitos
 
-As ferramentas a seguir devem estar instaladas em sua máquina:
+Este projeto foi executado em um Notebook intel core i5 10th gen com 24GB de ram, 128gb de armazenamento SSD em um sistema operacional Linux distribuição Pop!_OS 22.04 LTS. O ambiente a ser criado requer 8gb de memória RAM.
+
+As ferramentas a seguir devem estar instaladas no ambiente:
 
 - [Vagrant](https://developer.hashicorp.com/vagrant/downloads)
 - [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.html)
 - [Oracle VirtualBox](https://www.virtualbox.org/wiki/Downloads)
+
+> Até o momento, não foram realizados testes em ambientes Windows com WSL2 e VirtualBox. Embora exista a possibilidade de sucesso na execução, não é possível garantir que funcione conforme esperado.
 
 ## Arquivos do Repositório
 
