@@ -16,7 +16,7 @@ Vagrant.configure("2") do |config|
         master.vm.provider "virtualbox" do |v|
             v.memory = 2048
             v.cpus = 2
-            v.name = "k8s-master"
+            v.name = "master"
         end
 
         master.vm.hostname = "master"
@@ -34,9 +34,9 @@ Vagrant.configure("2") do |config|
         
         config.vm.define hostname do |node|
             node.vm.provider "virtualbox" do |v|
-                v.memory = 2048
+                v.memory = 3072
                 v.cpus = 2
-                v.name = "k8s-#{hostname}"
+                v.name = "#{hostname}"
             end
             node.vm.hostname = "#{hostname}"
             node.vm.network "private_network", ip: node_ip
