@@ -171,16 +171,15 @@ kubectl get all -A
 Nesta seção, será apresentada a instalação e configuração de ferramentas complementares ao cluster:
 
 - Kubernetes Dashboard
-- Istio Service Mesh
 - Prometheus
 - Grafana
 - Kiali
 
-A estratégia será a seguinte:
-1. Criaremos um namespace para o Kubernetes Dashboard. Os serviços Prometheus, Grafana e Kiali ficarão no namespace `istio-system`.
+O fluxo seguirá conforme a seguir:
+1. Criaremos um namespace para o Kubernetes Dashboard. Os serviços: Prometheus, Grafana e Kiali ficarão no namespace `istio-system`.
 2. Adicionaremos os repositórios Helm dos serviços e atualizaremos os repositórios.
 3. Instalaremos os serviços via Helm.
-4. Para acessar os serviços fora do cluster, será necessário expor uma porta para o acesso externo. Criaremos um único arquivo YAML contendo as configurações para expor os serviços (Prometheus, Grafana e Kiali) através do NodePort.
+4. Para acessar os serviços fora do cluster, será necessário expor uma porta para o acesso externo. Criaremos um único arquivo YAML contendo as configurações para expor os serviços (Prometheus, Grafana e Kiali) via NodePort.
 
 
 ### Adicionando os Repositórios
@@ -491,7 +490,7 @@ v.memory = 2048
 v.cpus = 2
 ```
 
-Para alterar a quantidade de nós workers:
+Para alterar a quantidade de workers nodes:
 
 1. Altere a quantidade na variável `N` no arquivo `Vagrantfile`.
 2. Insira (ou remova) a entrada correspondente no arquivo `inventory/vagrant.hosts`, de acordo com a quantidade de nós estipulada em `N`, respeitando a sintaxe e sequência de endereços IP.
