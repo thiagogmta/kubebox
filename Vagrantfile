@@ -34,7 +34,7 @@ Vagrant.configure("2") do |config|
         
         config.vm.define hostname do |node|
             node.vm.provider "virtualbox" do |v|
-                v.memory = 3072
+                v.memory = 2048
                 v.cpus = 2
                 v.name = "#{hostname}"
             end

@@ -1,7 +1,7 @@
 
 # Kubebox - Kubernetes com Istio no VirtualBox automatizado por Vagrant e provisionado por Ansible
 
-Este repositório apresenta o **Kubebox**, uma automação de ambiente de cluster Kubernetes com Kubeadm, Containerd e Istio Service Mesh, automatizado por Vagrant e provisionado via Ansible.
+Este repositório apresenta o **Kubebox**, uma automação de ambiente de cluster Kubernetes com Kubeadm e Containerd automatizado por Vagrant e provisionado via Ansible.
 
 Thiago Guimarães Tavares  
 [thiagogmta@ifto.edu.br](mailto:thiagogmta@ifto.edu.br)
@@ -20,8 +20,8 @@ Ao final desta implantação, o cluster contará com as seguintes ferramentas:
 
 - **Kubernetes Dashboard**  
   Interface gráfica para gerenciar e monitorar clusters Kubernetes.
-- **Istio Service Mesh**  
-  Malha de serviços que facilita a comunicação entre microserviços, fornecendo balanceamento de carga, observabilidade, segurança e roteamento de tráfego.
+<!-- - **Istio Service Mesh**  
+  Malha de serviços que facilita a comunicação entre microserviços, fornecendo balanceamento de carga, observabilidade, segurança e roteamento de tráfego. -->
 - **Prometheus**  
   Sistema de monitoramento que coleta e armazena métricas em tempo real, permitindo o monitoramento do desempenho de aplicações.
 - **Grafana**  
@@ -113,7 +113,7 @@ CoreDNS is running at https://192.168.50.10:6443/api/v1/namespaces/kube-system/s
 
 Seu cluster está pronto para receber aplicações de teste.
 
-## Istio Service Mesh
+<!-- ## Istio Service Mesh
 
 Nesta seção, faremos a instalação do Istio Service Mesh no cluster:
 
@@ -164,7 +164,7 @@ Podemos consultar todos os pods, serviços e deployments do cluster com:
 
 ```bash
 kubectl get all -A
-```
+``` -->
 
 ## Instalação e Configuração: Kubernetes Dashboard, Prometheus, Grafana e Kiali
 
