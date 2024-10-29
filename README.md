@@ -1,5 +1,5 @@
 
-# Kubebox - Kubernetes com Istio no VirtualBox automatizado por Vagrant e provisionado por Ansible
+# Kubebox - Kubernetes no VirtualBox automatizado por Vagrant e provisionado por Ansible
 
 Este repositório apresenta o **Kubebox**, uma automação de ambiente de cluster Kubernetes com Kubeadm e Containerd automatizado por Vagrant e provisionado via Ansible.
 
@@ -29,9 +29,10 @@ Ao final desta implantação, o cluster contará com as seguintes ferramentas:
 <!--
 - **Jaeger**  
   Ferramenta de rastreamento distribuído utilizada para monitorar e solucionar problemas de desempenho em sistemas de microserviços, identificando gargalos em transações complexas.
--->
+
 - **Kiali**  
   Interface de gerenciamento e observabilidade para o Istio Service Mesh, facilitando a visualização de topologias de serviços, monitoramento de tráfego e diagnósticos de problemas em ambientes de microserviços.
+-->
 
 > Observação: Até o momento, não foram realizados testes em ambientes Windows com WSL2 e VirtualBox. Embora seja possível que funcione, não há garantias.
 
@@ -173,10 +174,9 @@ Nesta seção, será apresentada a instalação e configuração de ferramentas 
 - Kubernetes Dashboard
 - Prometheus
 - Grafana
-- Kiali
 
 O fluxo seguirá conforme a seguir:
-1. Criaremos um namespace para o Kubernetes Dashboard. Os serviços: Prometheus, Grafana e Kiali ficarão no namespace `istio-system`.
+1. Criaremos um namespace para o Kubernetes Dashboard Prometheus e Grafana e Kiali ficarão no namespace `monitor-system`.
 2. Adicionaremos os repositórios Helm dos serviços e atualizaremos os repositórios.
 3. Instalaremos os serviços via Helm.
 4. Para acessar os serviços fora do cluster, será necessário expor uma porta para o acesso externo. Criaremos um único arquivo YAML contendo as configurações para expor os serviços (Prometheus, Grafana e Kiali) via NodePort.
@@ -185,8 +185,9 @@ O fluxo seguirá conforme a seguir:
 ### Adicionando os Repositórios
 
 ```bash
-# Criando o namespace para o Dashboard
+# Criando Namespaces
 kubectl create namespace kubernetes-dashboard
+kubectl create namespace monitor-system
 
 # Adicionando o repositório do Kubernetes Dashboard
 helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
@@ -196,9 +197,6 @@ helm repo add prometheus-community https://prometheus-community.github.io/helm-c
 
 # Adicionando o repositório do Grafana
 helm repo add grafana https://grafana.github.io/helm-charts
-
-# Adicionando o repositório do Kiali
-helm repo add kiali https://kiali.org/helm-charts
 
 # Atualizando os repositórios Helm
 helm repo update
@@ -211,13 +209,10 @@ helm repo update
 helm install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard -n kubernetes-dashboard
 
 # Instalando o Prometheus
-helm install prometheus prometheus-community/kube-prometheus-stack -n istio-system
+helm install prometheus prometheus-community/kube-prometheus-stack -n monitor-system
 
 # Instalando o Grafana
-helm install grafana grafana/grafana -n istio-system
-
-# Instalando o Kiali Server
-helm install kiali-server kiali/kiali-server -n istio-system
+helm install grafana grafana/grafana -n monitor-system
 ```
 
 Caso seja necessário desinstalar os serviços:
@@ -227,17 +222,14 @@ Caso seja necessário desinstalar os serviços:
 helm uninstall kubernetes-dashboard -n kubernetes-dashboard
 
 # Desinstalar o Prometheus
-helm uninstall prometheus -n istio-system
+helm uninstall prometheus -n monitor-system
 
 # Desinstalar o Grafana
-helm uninstall grafana -n istio-system
-
-# Desinstalar o Kiali
-helm uninstall kiali-server -n istio-system
+helm uninstall grafana -n monitor-system
 
 # Remover os namespaces
 kubectl delete namespace kubernetes-dashboard
-kubectl delete namespace istio-system
+kubectl delete namespace monitor-system
 ```
 
 ### Verificando os Serviços
@@ -250,7 +242,7 @@ kubectl get all -A
 kubectl get svc -n kubernetes-dashboard
 
 # Lista todos os serviços do namespace istio-system
-kubectl get svc -n istio-system
+kubectl get svc -n monitor-system
 ```
 
 ### Expondo os Serviços via NodePort
@@ -288,9 +280,8 @@ kind: Service
 metadata:
   labels:
     app: prometheus-operated
-    release: istio
   name: prometheus-operated-np
-  namespace: istio-system
+  namespace: monitor-system
 spec:
   type: NodePort
   ports:
@@ -307,9 +298,8 @@ kind: Service
 metadata:
   labels:
     app: grafana
-    release: istio
   name: grafana-np
-  namespace: istio-system
+  namespace: monitor-system
 spec:
   type: NodePort
   ports:
@@ -319,25 +309,6 @@ spec:
       targetPort: 3000
   selector:
     app.kubernetes.io/name: grafana
----
-# Kiali
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app: kiali
-    release: istio
-  name: kiali-np
-  namespace: istio-system
-spec:
-  type: NodePort
-  ports:
-    - nodePort: 32367
-      port: 20001
-      protocol: TCP
-      targetPort: 20001
-  selector:
-    app.kubernetes.io/name: kiali
 ```
 
 Aplique as configurações do arquivo com:
@@ -350,31 +321,31 @@ Verificando o NodePort dos serviços:
 
 ```bash
 kubectl get svc -n kubernetes-dashboard
-kubectl get svc -n istio-system
+kubectl get svc -n monitor-system
 ```
 
 ```bash
 # Saida do comando: Kubectl get svc -n kubernetes-dashboard
-NAME                                   TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                         AGE
-kubernetes-dashboard-api               ClusterIP   10.98.129.92     <none>        8000/TCP                        4m1s
-kubernetes-dashboard-auth              ClusterIP   10.97.165.27     <none>        8000/TCP                        4m1s
-kubernetes-dashboard-kong-manager      NodePort    10.108.27.222    <none>        8002:31201/TCP,8445:30841/TCP   4m1s
-kubernetes-dashboard-kong-proxy        ClusterIP   10.102.181.148   <none>        443/TCP                         4m1s
-kubernetes-dashboard-metrics-scraper   ClusterIP   10.101.169.245   <none>        8000/TCP                        4m1s
-kubernetes-dashboard-web               ClusterIP   10.108.130.135   <none>        8000/TCP                        4m1s
+NAME                                   TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)         AGE
+kubernetes-dashboard-api               ClusterIP   10.96.8.40       <none>        8000/TCP        6m28s
+kubernetes-dashboard-auth              ClusterIP   10.102.111.154   <none>        8000/TCP        6m28s
+kubernetes-dashboard-kong-proxy        NodePort    10.109.154.128   <none>        443:32364/TCP   6m28s
+kubernetes-dashboard-metrics-scraper   ClusterIP   10.98.7.254      <none>        8000/TCP        6m28s
+kubernetes-dashboard-web               ClusterIP   10.101.79.40     <none>        8000/TCP        6m28s
 
-# Saída do comando: kubectl get svc -n istio-system
-alertmanager-operated                     ClusterIP   None             <none>        9093/TCP,9094/TCP,9094/UDP              7m57s
-grafana                                   ClusterIP   10.108.69.203    <none>        80/TCP                                  6m47s
-istiod                                    ClusterIP   10.108.191.32    <none>        15010/TCP,15012/TCP,443/TCP,15014/TCP   31m
-kiali                                     ClusterIP   10.101.38.138    <none>        20001/TCP,9090/TCP                      5m37s
-prometheus-grafana                        ClusterIP   10.111.16.100    <none>        80/TCP                                  8m27s
-prometheus-kube-prometheus-alertmanager   ClusterIP   10.107.105.190   <none>        9093/TCP,8080/TCP                       8m27s
-prometheus-kube-prometheus-operator       ClusterIP   10.100.140.66    <none>        443/TCP                                 8m27s
-prometheus-kube-prometheus-prometheus     ClusterIP   10.109.97.83     <none>        9090/TCP,8080/TCP                       8m27s
-prometheus-kube-state-metrics             ClusterIP   10.99.146.104    <none>        8080/TCP                                8m27s
-prometheus-operated                       ClusterIP   None             <none>        9090/TCP                                7m57s
-prometheus-prometheus-node-exporter       ClusterIP   10.109.73.126    <none>        9100/TCP                                8m27s
+# Saída do comando: kubectl get svc -n monitor-system
+NAME                                      TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
+alertmanager-operated                     ClusterIP   None             <none>        9093/TCP,9094/TCP,9094/UDP   5m23s
+grafana                                   ClusterIP   10.97.102.24     <none>        80/TCP                       4m46s
+grafana-np                                NodePort    10.109.137.195   <none>        80:32366/TCP                 115s
+prometheus-grafana                        ClusterIP   10.107.19.110    <none>        80/TCP                       5m50s
+prometheus-kube-prometheus-alertmanager   ClusterIP   10.108.71.27     <none>        9093/TCP,8080/TCP            5m50s
+prometheus-kube-prometheus-operator       ClusterIP   10.106.126.29    <none>        443/TCP                      5m50s
+prometheus-kube-prometheus-prometheus     ClusterIP   10.105.51.124    <none>        9090/TCP,8080/TCP            5m50s
+prometheus-kube-state-metrics             ClusterIP   10.107.91.146    <none>        8080/TCP                     5m50s
+prometheus-operated                       ClusterIP   None             <none>        9090/TCP                     5m23s
+prometheus-operated-np                    NodePort    10.105.172.204   <none>        9090:32365/TCP               115s
+prometheus-prometheus-node-exporter       ClusterIP   10.103.47.213    <none>        9100/TCP                     5m50s
 ```
 
 Para acessar os serviços no navegador, utilize os endereços a seguir:
@@ -382,7 +353,6 @@ Para acessar os serviços no navegador, utilize os endereços a seguir:
 - **Kubernetes Dashboard**: https://192.168.50.10:32364
 - **Prometheus**: http://192.168.50.10:32365
 - **Grafana**: http://192.168.50.10:32366
-- **Kiali**: http://192.168.50.10:32367
 
 ## Acessando os Serviços: Kubernetes Dashboard, Prometheus, Grafana e Kiali
 
@@ -460,26 +430,12 @@ O Prometheus apresenta sua interface diretamente.
 Para efetuar login no Grafana, utilize o usuário `admin`. Para obter a senha, utilize o comando:
 
 ```bash
-kubectl get secret --namespace istio-system grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+kubectl get secret --namespace imonitor-system grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
 ```
 
 Copie e cole a senha no campo "Password".
 
 ![Login Grafana](/img/grafana2.png)
-
-### Kiali
-
-Para acessar o dashboard do Kiali, será necessário gerar um token de acesso:
-
-```bash
-kubectl -n istio-system create token kiali
-```
-
-![Acesso ao Kiali](/img/kiali1.png)
-
-Copie e cole o token no campo de login.
-
-![Acesso ao Kiali](/img/kiali2.png)
 
 ## Alterando a Quantidade de Nós ou Recursos Exigidos
 
