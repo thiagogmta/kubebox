@@ -212,7 +212,7 @@ helm install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard -n k
 helm install prometheus prometheus-community/kube-prometheus-stack -n monitoring
 
 # Instalando o Grafana
-helm install grafana grafana/grafana -n monitoring
+helm install my-grafana grafana/grafana -n monitoring
 ```
 
 Caso seja necessário desinstalar os serviços:
@@ -335,17 +335,17 @@ kubernetes-dashboard-web               ClusterIP   10.101.79.40     <none>      
 
 # Saída do comando: kubectl get svc -n monitoring
 NAME                                      TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
-alertmanager-operated                     ClusterIP   None             <none>        9093/TCP,9094/TCP,9094/UDP   5m23s
-grafana                                   ClusterIP   10.97.102.24     <none>        80/TCP                       4m46s
-grafana-np                                NodePort    10.109.137.195   <none>        80:32366/TCP                 115s
-prometheus-grafana                        ClusterIP   10.107.19.110    <none>        80/TCP                       5m50s
-prometheus-kube-prometheus-alertmanager   ClusterIP   10.108.71.27     <none>        9093/TCP,8080/TCP            5m50s
-prometheus-kube-prometheus-operator       ClusterIP   10.106.126.29    <none>        443/TCP                      5m50s
-prometheus-kube-prometheus-prometheus     ClusterIP   10.105.51.124    <none>        9090/TCP,8080/TCP            5m50s
-prometheus-kube-state-metrics             ClusterIP   10.107.91.146    <none>        8080/TCP                     5m50s
-prometheus-operated                       ClusterIP   None             <none>        9090/TCP                     5m23s
-prometheus-operated-np                    NodePort    10.105.172.204   <none>        9090:32365/TCP               115s
-prometheus-prometheus-node-exporter       ClusterIP   10.103.47.213    <none>        9100/TCP                     5m50s
+alertmanager-operated                     ClusterIP   None             <none>        9093/TCP,9094/TCP,9094/UDP   4m9s
+grafana-np                                NodePort    10.111.115.63    <none>        80:32366/TCP                 24h
+my-grafana                                ClusterIP   10.111.150.133   <none>        80/TCP                       47m
+prometheus-grafana                        ClusterIP   10.99.118.196    <none>        80/TCP                       4m13s
+prometheus-kube-prometheus-alertmanager   ClusterIP   10.107.150.107   <none>        9093/TCP,8080/TCP            4m13s
+prometheus-kube-prometheus-operator       ClusterIP   10.98.23.254     <none>        443/TCP                      4m13s
+prometheus-kube-prometheus-prometheus     ClusterIP   10.110.248.43    <none>        9090/TCP,8080/TCP            4m13s
+prometheus-kube-state-metrics             ClusterIP   10.98.193.0      <none>        8080/TCP                     4m13s
+prometheus-operated                       ClusterIP   None             <none>        9090/TCP                     4m8s
+prometheus-operated-np                    NodePort    10.111.239.116   <none>        9090:32365/TCP               24h
+prometheus-prometheus-node-exporter       ClusterIP   10.99.207.148    <none>        9100/TCP                     4m13s
 ```
 
 Para acessar os serviços no navegador, utilize os endereços a seguir:
@@ -370,7 +370,9 @@ Vamos criar um arquivo de implantação `user-dashboard.yaml` que:
 - Atribui a função de administrador ao usuário.
 - Cria um token para autenticação no Kubernetes Dashboard.
 
-O conteúdo do `user-dashboard.yaml`:
+```yaml
+nano user-dashboard.yaml
+```
 
 ```yaml
 --- 
@@ -430,16 +432,16 @@ O Prometheus apresenta sua interface diretamente.
 Para efetuar login no Grafana, utilize o usuário `admin`. Para obter a senha, utilize o comando:
 
 ```bash
-kubectl get secret -n monitoring grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+kubectl get secret -n monitoring my-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
 ```
 
 Copie e cole a senha no campo "Password".
 
 ![Login Grafana](/img/grafana2.png)
 
-**Habilitando Armazenamento Persistente**
+**Habilitando Armazenamento Persistente (opicional)**
 
-Por padrão o armazenamento persistente do Grafana vem desativado, o que significa que os dados serão perdidos quando o contêiner for finalizado ou reiniciado. Para isso crie no cluster um arquivo `values.yaml`. Copie o conteúdo do arquivo `pvc/values.yaml` deste repositório e cole no arquivo criado. Habilite o armazenamento persistente com:
+Por padrão o armazenamento persistente (persistent storage) do Grafana vem desativado, o que significa que os dados serão perdidos quando o contêiner for finalizado ou reiniciado. Para habilitar o armazenamento persistente crie no cluster um arquivo `values.yaml`. Copie o conteúdo do arquivo `pvc/values.yaml` deste repositório e cole no arquivo criado. Habilite o armazenamento persistente com:
 
 ```bash
 helm upgrade grafana grafana/grafana -f values.yaml -n monitoring
