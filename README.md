@@ -176,7 +176,7 @@ Nesta seção, será apresentada a instalação e configuração de ferramentas 
 - Grafana
 
 O fluxo seguirá conforme a seguir:
-1. Criaremos um namespace para o Kubernetes Dashboard Prometheus e Grafana e Kiali ficarão no namespace `monitor-system`.
+1. Criaremos um namespace para o Kubernetes Dashboard Prometheus e Grafana e Kiali ficarão no namespace `monitoring`.
 2. Adicionaremos os repositórios Helm dos serviços e atualizaremos os repositórios.
 3. Instalaremos os serviços via Helm.
 4. Para acessar os serviços fora do cluster, será necessário expor uma porta para o acesso externo. Criaremos um único arquivo YAML contendo as configurações para expor os serviços (Prometheus, Grafana e Kiali) via NodePort.
@@ -187,7 +187,7 @@ O fluxo seguirá conforme a seguir:
 ```bash
 # Criando Namespaces
 kubectl create namespace kubernetes-dashboard
-kubectl create namespace monitor-system
+kubectl create namespace monitoring
 
 # Adicionando o repositório do Kubernetes Dashboard
 helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
@@ -209,10 +209,10 @@ helm repo update
 helm install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard -n kubernetes-dashboard
 
 # Instalando o Prometheus
-helm install prometheus prometheus-community/kube-prometheus-stack -n monitor-system
+helm install prometheus prometheus-community/kube-prometheus-stack -n monitoring
 
 # Instalando o Grafana
-helm install grafana grafana/grafana -n monitor-system
+helm install grafana grafana/grafana -n monitoring
 ```
 
 Caso seja necessário desinstalar os serviços:
@@ -222,14 +222,14 @@ Caso seja necessário desinstalar os serviços:
 helm uninstall kubernetes-dashboard -n kubernetes-dashboard
 
 # Desinstalar o Prometheus
-helm uninstall prometheus -n monitor-system
+helm uninstall prometheus -n monitoring
 
 # Desinstalar o Grafana
-helm uninstall grafana -n monitor-system
+helm uninstall grafana -n monitoring
 
 # Remover os namespaces
 kubectl delete namespace kubernetes-dashboard
-kubectl delete namespace monitor-system
+kubectl delete namespace monitoring
 ```
 
 ### Verificando os Serviços
@@ -242,7 +242,7 @@ kubectl get all -A
 kubectl get svc -n kubernetes-dashboard
 
 # Lista todos os serviços do namespace istio-system
-kubectl get svc -n monitor-system
+kubectl get svc -n monitoring
 ```
 
 ### Expondo os Serviços via NodePort
@@ -281,7 +281,7 @@ metadata:
   labels:
     app: prometheus-operated
   name: prometheus-operated-np
-  namespace: monitor-system
+  namespace: monitoring
 spec:
   type: NodePort
   ports:
@@ -299,7 +299,7 @@ metadata:
   labels:
     app: grafana
   name: grafana-np
-  namespace: monitor-system
+  namespace: monitoring
 spec:
   type: NodePort
   ports:
@@ -321,7 +321,7 @@ Verificando o NodePort dos serviços:
 
 ```bash
 kubectl get svc -n kubernetes-dashboard
-kubectl get svc -n monitor-system
+kubectl get svc -n monitoring
 ```
 
 ```bash
@@ -333,7 +333,7 @@ kubernetes-dashboard-kong-proxy        NodePort    10.109.154.128   <none>      
 kubernetes-dashboard-metrics-scraper   ClusterIP   10.98.7.254      <none>        8000/TCP        6m28s
 kubernetes-dashboard-web               ClusterIP   10.101.79.40     <none>        8000/TCP        6m28s
 
-# Saída do comando: kubectl get svc -n monitor-system
+# Saída do comando: kubectl get svc -n monitoring
 NAME                                      TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
 alertmanager-operated                     ClusterIP   None             <none>        9093/TCP,9094/TCP,9094/UDP   5m23s
 grafana                                   ClusterIP   10.97.102.24     <none>        80/TCP                       4m46s
@@ -430,12 +430,20 @@ O Prometheus apresenta sua interface diretamente.
 Para efetuar login no Grafana, utilize o usuário `admin`. Para obter a senha, utilize o comando:
 
 ```bash
-kubectl get secret --namespace imonitor-system grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+kubectl get secret -n monitoring grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
 ```
 
 Copie e cole a senha no campo "Password".
 
 ![Login Grafana](/img/grafana2.png)
+
+**Habilitando Armazenamento Persistente**
+
+Por padrão o armazenamento persistente do Grafana vem desativado, o que significa que os dados serão perdidos quando o contêiner for finalizado ou reiniciado. Para isso crie no cluster um arquivo `values.yaml`. Copie o conteúdo do arquivo `pvc/values.yaml` deste repositório e cole no arquivo criado. Habilite o armazenamento persistente com:
+
+```bash
+helm upgrade grafana grafana/grafana -f values.yaml -n monitoring
+```
 
 ## Alterando a Quantidade de Nós ou Recursos Exigidos
 
