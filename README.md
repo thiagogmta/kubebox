@@ -225,7 +225,7 @@ helm uninstall kubernetes-dashboard -n kubernetes-dashboard
 helm uninstall prometheus -n monitoring
 
 # Desinstalar o Grafana
-helm uninstall grafana -n monitoring
+helm uninstall my-grafana -n monitoring
 
 # Remover os namespaces
 kubectl delete namespace kubernetes-dashboard
@@ -298,7 +298,7 @@ kind: Service
 metadata:
   labels:
     app: grafana
-  name: grafana-np
+  name: my-grafana
   namespace: monitoring
 spec:
   type: NodePort
