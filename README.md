@@ -10,11 +10,11 @@ Thiago Guimarães Tavares
 
 Este projeto foi executado em um notebook com processador Intel Core i5 10ª geração, 24GB de RAM e 128GB de armazenamento SSD, utilizando o sistema operacional Linux Pop!_OS 22.04 LTS. O ambiente a ser criado requer, no mínimo, 8GB de memória RAM.
 
-As seguintes ferramentas devem estar instaladas no ambiente:
+As ferramentas [Oracle VirtualBox](https://www.virtualbox.org/wiki/Downloads), [Vagrant](https://developer.hashicorp.com/vagrant/downloads) e [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.html) devem estar instaladas no ambiente. Para nossos testes foram utilizadas as referidas ferramentas nas versões:
 
-- [Vagrant](https://developer.hashicorp.com/vagrant/downloads)
-- [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.html)
-- [Oracle VirtualBox](https://www.virtualbox.org/wiki/Downloads)
+- Oracle VirtualBox - 6.1
+- Vagrant - 2.4.1
+- Ansible - 2.16.10
 
 Ao final desta implantação, o cluster contará com as seguintes ferramentas:
 
@@ -335,17 +335,16 @@ kubernetes-dashboard-web               ClusterIP   10.101.79.40     <none>      
 
 # Saída do comando: kubectl get svc -n monitoring
 NAME                                      TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
-alertmanager-operated                     ClusterIP   None             <none>        9093/TCP,9094/TCP,9094/UDP   4m9s
-grafana-np                                NodePort    10.111.115.63    <none>        80:32366/TCP                 24h
-my-grafana                                ClusterIP   10.111.150.133   <none>        80/TCP                       47m
-prometheus-grafana                        ClusterIP   10.99.118.196    <none>        80/TCP                       4m13s
-prometheus-kube-prometheus-alertmanager   ClusterIP   10.107.150.107   <none>        9093/TCP,8080/TCP            4m13s
-prometheus-kube-prometheus-operator       ClusterIP   10.98.23.254     <none>        443/TCP                      4m13s
-prometheus-kube-prometheus-prometheus     ClusterIP   10.110.248.43    <none>        9090/TCP,8080/TCP            4m13s
-prometheus-kube-state-metrics             ClusterIP   10.98.193.0      <none>        8080/TCP                     4m13s
-prometheus-operated                       ClusterIP   None             <none>        9090/TCP                     4m8s
-prometheus-operated-np                    NodePort    10.111.239.116   <none>        9090:32365/TCP               24h
-prometheus-prometheus-node-exporter       ClusterIP   10.99.207.148    <none>        9100/TCP                     4m13s
+alertmanager-operated                     ClusterIP   None             <none>        9093/TCP,9094/TCP,9094/UDP   94m
+my-grafana                                NodePort    10.97.254.93     <none>        80:32366/TCP                 100m
+prometheus-grafana                        ClusterIP   10.102.93.162    <none>        80/TCP                       94m
+prometheus-kube-prometheus-alertmanager   ClusterIP   10.109.8.238     <none>        9093/TCP,8080/TCP            94m
+prometheus-kube-prometheus-operator       ClusterIP   10.108.214.142   <none>        443/TCP                      94m
+prometheus-kube-prometheus-prometheus     ClusterIP   10.109.176.55    <none>        9090/TCP,8080/TCP            94m
+prometheus-kube-state-metrics             ClusterIP   10.102.140.77    <none>        8080/TCP                     94m
+prometheus-operated                       ClusterIP   None             <none>        9090/TCP                     94m
+prometheus-operated-np                    NodePort    10.110.101.229   <none>        9090:32365/TCP               95m
+prometheus-prometheus-node-exporter       ClusterIP   10.103.237.251   <none>        9100/TCP                     94m
 ```
 
 Para acessar os serviços no navegador, utilize os endereços a seguir:
