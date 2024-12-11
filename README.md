@@ -167,7 +167,7 @@ Podemos consultar todos os pods, serviços e deployments do cluster com:
 kubectl get all -A
 ``` -->
 
-## Instalação e Configuração: Kubernetes Dashboard, Prometheus, Grafana e Kiali
+## Instalação e Configuração: Kubernetes Dashboard, Prometheus e Grafana
 
 Nesta seção, será apresentada a instalação e configuração de ferramentas complementares ao cluster:
 
@@ -176,10 +176,10 @@ Nesta seção, será apresentada a instalação e configuração de ferramentas 
 - Grafana
 
 O fluxo seguirá conforme a seguir:
-1. Criaremos um namespace para o Kubernetes Dashboard Prometheus e Grafana e Kiali ficarão no namespace `monitoring`.
+1. Criaremos um namespace para o Kubernetes Dashboard intitulado `kubernetes-dashboard` e um segundo namespace para o Prometheus e Grafana intitulado `monitoring`.
 2. Adicionaremos os repositórios Helm dos serviços e atualizaremos os repositórios.
 3. Instalaremos os serviços via Helm.
-4. Para acessar os serviços fora do cluster, será necessário expor uma porta para o acesso externo. Criaremos um único arquivo YAML contendo as configurações para expor os serviços (Prometheus, Grafana e Kiali) via NodePort.
+4. Para acessar os serviços fora do cluster, será necessário expor uma porta para o acesso externo. Criaremos um único arquivo YAML contendo as configurações para expor os serviços (Kubernetes Dashboard, Prometheus e Grafana) via NodePort.
 
 
 ### Adicionando os Repositórios
