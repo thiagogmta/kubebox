@@ -420,9 +420,6 @@ Copie o token e cole na janela de login para acessar o Kubernetes Dashboard.
 
 ![Kubernetes Dashboard](/img/dashboard.png)
 
-  > Observação: caso .
-
-
 ### Prometheus
 
 O Prometheus apresenta sua interface diretamente.
